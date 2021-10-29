@@ -29,6 +29,7 @@ func handleWithStaticData(w http.ResponseWriter, _ *http.Request, d *data, fSys 
 	data := map[string]interface{}{
 		"Name":            d.settings.Branding.Name,
 		"DisableExternal": d.settings.Branding.DisableExternal,
+		"Color":           d.settings.Branding.Color,
 		"BaseURL":         d.server.BaseURL,
 		"Version":         version.Version,
 		"StaticURL":       path.Join(d.server.BaseURL, "/static"),
@@ -78,7 +79,7 @@ func handleWithStaticData(w http.ResponseWriter, _ *http.Request, d *data, fSys 
 		return http.StatusInternalServerError, err
 	}
 
-	data["Json"] = string(b)
+	data["Json"] = strings.ReplaceAll(string(b), `'`, `\'`)
 
 	fileContents, err := fs.ReadFile(fSys, file)
 	if err != nil {

@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -96,13 +95,9 @@ func resourcePostHandler(fileCache FileCache) handleFunc {
 			return http.StatusForbidden, nil
 		}
 
-		defer func() {
-			_, _ = io.Copy(ioutil.Discard, r.Body)
-		}()
-
 		// Directories creation on POST.
 		if strings.HasSuffix(r.URL.Path, "/") {
-			err := d.user.Fs.MkdirAll(r.URL.Path, 0775)
+			err := d.user.Fs.MkdirAll(r.URL.Path, 0775) //nolint:gomnd
 			return errToStatus(err), err
 		}
 
@@ -154,16 +149,20 @@ var resourcePutHandler = withUser(func(w http.ResponseWriter, r *http.Request, d
 		return http.StatusForbidden, nil
 	}
 
-	defer func() {
-		_, _ = io.Copy(ioutil.Discard, r.Body)
-	}()
-
 	// Only allow PUT for files.
 	if strings.HasSuffix(r.URL.Path, "/") {
 		return http.StatusMethodNotAllowed, nil
 	}
 
-	err := d.RunHook(func() error {
+	exists, err := afero.Exists(d.user.Fs, r.URL.Path)
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+	if !exists {
+		return http.StatusNotFound, nil
+	}
+
+	err = d.RunHook(func() error {
 		info, writeErr := writeFile(d.user.Fs, r.URL.Path, r.Body)
 		if writeErr != nil {
 			return writeErr
@@ -173,10 +172,6 @@ var resourcePutHandler = withUser(func(w http.ResponseWriter, r *http.Request, d
 		w.Header().Set("ETag", etag)
 		return nil
 	}, "save", r.URL.Path, "", d.user)
-
-	if err != nil {
-		_ = d.user.Fs.RemoveAll(r.URL.Path)
-	}
 
 	return errToStatus(err), err
 })
@@ -260,12 +255,12 @@ func addVersionSuffix(source string, fs afero.Fs) string {
 
 func writeFile(fs afero.Fs, dst string, in io.Reader) (os.FileInfo, error) {
 	dir, _ := path.Split(dst)
-	err := fs.MkdirAll(dir, 0775)
+	err := fs.MkdirAll(dir, 0775) //nolint:gomnd
 	if err != nil {
 		return nil, err
 	}
 
-	file, err := fs.OpenFile(dst, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0775)
+	file, err := fs.OpenFile(dst, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0775) //nolint:gomnd
 	if err != nil {
 		return nil, err
 	}
