@@ -325,7 +325,7 @@ func (i *FileInfo) readListing(checker rules.Checker, readHeader bool) error {
 			continue
 		}
 
-		isSymlink := false
+		isSymlink, isInvalidLink := false, false
 		if IsSymlink(f.Mode()) {
 			isSymlink = true
 			// It's a symbolic link. We try to follow it. If it doesn't work,
@@ -333,6 +333,8 @@ func (i *FileInfo) readListing(checker rules.Checker, readHeader bool) error {
 			info, err := i.Fs.Stat(fPath)
 			if err == nil {
 				f = info
+			} else {
+				isInvalidLink = true
 			}
 		}
 
@@ -353,9 +355,13 @@ func (i *FileInfo) readListing(checker rules.Checker, readHeader bool) error {
 		} else {
 			listing.NumFiles++
 
-			err := file.detectType(true, false, readHeader)
-			if err != nil {
-				return err
+			if isInvalidLink {
+				file.Type = "invalid_link"
+			} else {
+				err := file.detectType(true, false, readHeader)
+				if err != nil {
+					return err
+				}
 			}
 		}
 
