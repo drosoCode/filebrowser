@@ -205,6 +205,7 @@
     "newUser": "New User",
     "onlyOffice": "Only Office Integration",
     "onlyOfficeUrl": "Only Office URL (leave blank to disable)",
+    "onlyOfficeJwt": "Only Office JWT (leave blank to disable)",
     "password": "Password",
     "passwordUpdated": "Password updated!",
     "path": "Path",

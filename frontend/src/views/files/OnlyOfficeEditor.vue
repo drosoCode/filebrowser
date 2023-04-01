@@ -80,11 +80,13 @@ export default {
     let onlyofficeScript = document.createElement("script");
     onlyofficeScript.setAttribute(
       "src",
-      `${onlyOffice}/web-apps/apps/api/documents/api.js`
+      `${onlyOffice.url}/web-apps/apps/api/documents/api.js`
     );
     document.head.appendChild(onlyofficeScript);
 
     /*eslint-disable */
+    console.log(onlyOffice);
+    console.log(this.user);
     onlyofficeScript.onload = () => {
       let fileUrl = `${window.location.protocol}//${window.location.host}${baseURL}/api/raw${url.encodePath(
         this.req.path
@@ -97,7 +99,7 @@ export default {
         Date.parse(this.req.modified).valueOf()
         + url
           .encodePath(this.req.path.split('/').reverse().join(''))
-          .replaceAll(/[!~[\]*'()/,;:\-%+.]/g, "")
+          .replaceAll(/[!~[\]*'()/,;:\-%+. ]/g, "")
       ).substring(0, 20);
 
       let config = {
@@ -124,7 +126,8 @@ export default {
           },
           lang: this.user.locale,
           mode: this.user.perm.modify ? "edit" : "view"
-        }
+        },
+        token: onlyOffice.jwt
       };
       this.editor = new DocsAPI.DocEditor("editor", config);
     };
