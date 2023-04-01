@@ -58,7 +58,7 @@ you want to change. Other options will remain unchanged.`,
 			case "branding.files":
 				set.Branding.Files = mustGetString(flags, flag.Name)
 			case "onlyoffice.url":
-				set.OnlyOffice.Url = mustGetString(flags, flag.Name)
+				set.OnlyOffice.URL = mustGetString(flags, flag.Name)
 			case "onlyoffice.jwt":
 				set.OnlyOffice.JWT = mustGetString(flags, flag.Name)
 			}
