@@ -22,6 +22,7 @@
 import { mapState } from "vuex";
 import url from "@/utils/url";
 import { baseURL, onlyOffice } from "@/utils/constants";
+import * as jose from 'jose';
 
 import HeaderBar from "@/components/header/HeaderBar";
 import Action from "@/components/header/Action";
@@ -126,10 +127,16 @@ export default {
           },
           lang: this.user.locale,
           mode: this.user.perm.modify ? "edit" : "view"
-        },
-        token: onlyOffice.jwt
+        }
       };
-      this.editor = new DocsAPI.DocEditor("editor", config);
+      
+      const alg = 'HS256';
+      new jose.SignJWT(config)
+        .setProtectedHeader({ alg })
+        .sign(new TextEncoder().encode(onlyOffice.jwtSecret)).then((jwt) => {
+          config.token = jwt;
+          this.editor = new DocsAPI.DocEditor("editor", config);
+        })
     };
     /*eslint-enable */
   },

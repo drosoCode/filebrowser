@@ -108,12 +108,12 @@
           </p>
           <p>
             <label for="onlyoffice-jwt">{{
-              $t("settings.onlyOfficeJwt")
+              $t("settings.onlyOfficeJwtSecret")
             }}</label>
             <input
               class="input input--block"
               type="text"
-              v-model="settings.onlyoffice.jwt"
+              v-model="settings.onlyoffice.jwtSecret"
               id="onlyoffice-jwt"
             />
           </p>

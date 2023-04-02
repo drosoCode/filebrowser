@@ -40,8 +40,8 @@ override the options.`,
 				Files:           mustGetString(flags, "branding.files"),
 			},
 			OnlyOffice: settings.OnlyOffice{
-				URL: mustGetString(flags, "onlyoffice.url"),
-				JWT: mustGetString(flags, "onlyoffice.jwt"),
+				URL:       mustGetString(flags, "onlyoffice.url"),
+				JWTSecret: mustGetString(flags, "onlyoffice.jwtSecret"),
 			},
 		}
 

@@ -59,8 +59,8 @@ you want to change. Other options will remain unchanged.`,
 				set.Branding.Files = mustGetString(flags, flag.Name)
 			case "onlyoffice.url":
 				set.OnlyOffice.URL = mustGetString(flags, flag.Name)
-			case "onlyoffice.jwt":
-				set.OnlyOffice.JWT = mustGetString(flags, flag.Name)
+			case "onlyoffice.jwtSecret":
+				set.OnlyOffice.JWTSecret = mustGetString(flags, flag.Name)
 			}
 		})
 
