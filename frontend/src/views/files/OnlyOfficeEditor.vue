@@ -22,7 +22,7 @@
 import { mapState } from "vuex";
 import url from "@/utils/url";
 import { baseURL, onlyOffice } from "@/utils/constants";
-import * as jose from 'jose';
+import * as jose from "jose";
 
 import HeaderBar from "@/components/header/HeaderBar";
 import Action from "@/components/header/Action";
