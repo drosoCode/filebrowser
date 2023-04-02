@@ -86,8 +86,6 @@ export default {
     document.head.appendChild(onlyofficeScript);
 
     /*eslint-disable */
-    console.log(onlyOffice);
-    console.log(this.user);
     onlyofficeScript.onload = () => {
       let fileUrl = `${window.location.protocol}//${window.location.host}${baseURL}/api/raw${url.encodePath(
         this.req.path
@@ -103,7 +101,7 @@ export default {
           .replaceAll(/[!~[\]*'()/,;:\-%+. ]/g, "")
       ).substring(0, 20);
 
-      let config = {
+      const config = {
         document: {
           fileType: this.req.extension.substring(1),
           key: key,
@@ -129,14 +127,18 @@ export default {
           mode: this.user.perm.modify ? "edit" : "view"
         }
       };
-      
-      const alg = 'HS256';
-      new jose.SignJWT(config)
-        .setProtectedHeader({ alg })
-        .sign(new TextEncoder().encode(onlyOffice.jwtSecret)).then((jwt) => {
-          config.token = jwt;
-          this.editor = new DocsAPI.DocEditor("editor", config);
-        })
+
+      if(onlyOffice.jwtSecret != "") {
+        const alg = 'HS256';
+        new jose.SignJWT(config)
+          .setProtectedHeader({ alg })
+          .sign(new TextEncoder().encode(onlyOffice.jwtSecret)).then((jwt) => {
+            config.token = jwt;
+            this.editor = new DocsAPI.DocEditor("editor", config);
+          })
+      } else {
+        this.editor = new DocsAPI.DocEditor("editor", config);
+      }
     };
     /*eslint-enable */
   },
